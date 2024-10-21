@@ -199,7 +199,7 @@ class Gemini_Chatbot:
         # Semakin kecil octaves, suara semakin chipmunk
         octaves = 0.5
 
-        new_sample_rate = int(sound.frame_rate * (2.0**octaves))
+        new_sample_rate = int(sound.frame_rate * (1.5**octaves))
         hipitch_sound = sound._spawn(
             sound.raw_data, overrides={"frame_rate": new_sample_rate}
         )
