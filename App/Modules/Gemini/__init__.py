@@ -125,6 +125,7 @@ class Gemini_Chatbot:
         self.pitchShift()
         pygame.mixer.music.load("./src/voices/pitched.wav")
         pygame.mixer.music.play()
+        isAnswering = True
             
     def speechToText(self, audio):
         try:
@@ -229,10 +230,11 @@ class Gemini_Chatbot:
         while isCommunicating:
             try:
                 text = self.speechListen()
-                response = self.sendMessage(text=text)
-                print(f"Response: {response}")
-                logging.info(msg=f"Response: {response}")
-                self.textToSpeech(text=response)
+                if (isAnswering and ("stop" in text.lower)) or not isAnswering:
+                    response = self.sendMessage(text=text)
+                    print(f"Response: {response}")
+                    logging.info(msg=f"Response: {response}")
+                    self.textToSpeech(text=response)
             except KeyboardInterrupt:
                 print("Program Closed")
                 logging.warning(msg=f"Program Closed")
