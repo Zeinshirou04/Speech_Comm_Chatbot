@@ -231,7 +231,8 @@ class Gemini_Chatbot:
         while isCommunicating:
             try:
                 text = self.speechListen()
-                if not text == undefinedAnswer or not text == "":
+                logging.warning(msg=f"Current state is: {not (text == undefinedAnswer) or not (text == "")}")
+                if not (text == undefinedAnswer) or not (text == ""):
                     response = self.sendMessage(text=text)
                     print(f"Response: {response}")
                     logging.info(msg=f"Response: {response}")
