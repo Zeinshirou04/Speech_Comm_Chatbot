@@ -34,6 +34,7 @@ safety_settings = {
 
 pygame.mixer.init()
 
+
 class Gemini_Chatbot:
     """
     Gemini_Chatbot is a simple Class that implement some of Google Gemini Library
@@ -122,12 +123,13 @@ class Gemini_Chatbot:
 
     def textToSpeech(self, text):
         text = self.removeSymbols(text=text)
-        self.engine.save_to_file(text=text, filename="./src/voices/original.wav")
+        self.engine.save_to_file(
+            text=text, filename="./src/voices/original.wav")
         self.engine.runAndWait()
         self.pitchShift()
         pygame.mixer.music.load("./src/voices/pitched.wav")
         pygame.mixer.music.play()
-            
+
     def speechToText(self, audio):
         try:
             text = self.recognizer.recognize_google(
@@ -193,7 +195,7 @@ class Gemini_Chatbot:
         with open(file=promptPath, mode='r') as file:
             prompt = file.read()
             self.prepHistory(prompt=prompt)
-    
+
     def pitchShift(self, fileName="./src/voices/original.wav"):
 
         sound = AudioSegment.from_file(file=fileName, format="wav")
@@ -206,7 +208,7 @@ class Gemini_Chatbot:
             sound.raw_data, overrides={"frame_rate": new_sample_rate}
         )
         hipitch_sound = hipitch_sound.set_frame_rate(44100)
-        
+
         try:
             hipitch_sound.export("./src/voices/pitched.wav", format="wav")
         except:
@@ -215,8 +217,8 @@ class Gemini_Chatbot:
             self.resetOutput()
             time.sleep(1)
             hipitch_sound.export("./src/voices/pitched.wav", format="wav")
-        
-    def resetOutput(self, outputPath = "./src/voices/pitched.wav"):
+
+    def resetOutput(self, outputPath="./src/voices/pitched.wav"):
         if os.path.exists(outputPath):
             os.remove(outputPath)
 
@@ -231,8 +233,8 @@ class Gemini_Chatbot:
         while isCommunicating:
             try:
                 text = self.speechListen()
-                logging.warning(msg=f"Current state is: {not (text == undefinedAnswer) or not (text == "")}")
-                if not (text == undefinedAnswer) or not (text == ""):
+                logging.warning(msg=f"Current state is: {"rosana" in text.lower()}")
+                if "rosana" in text.lower():
                     response = self.sendMessage(text=text)
                     print(f"Response: {response}")
                     logging.info(msg=f"Response: {response}")
