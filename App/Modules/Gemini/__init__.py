@@ -15,6 +15,8 @@ isSpeaking = False
 isAnswering = False
 isCommunicating = False
 
+undefinedAnswer = "Input tidak dapat diterima, silahkan kembalikan sebuah pesan untuk mengulangi pertanyaan"
+
 generation_config = {
     "temperature": 1,
     "top_p": 0.95,
@@ -125,7 +127,6 @@ class Gemini_Chatbot:
         self.pitchShift()
         pygame.mixer.music.load("./src/voices/pitched.wav")
         pygame.mixer.music.play()
-        isAnswering = True
             
     def speechToText(self, audio):
         try:
@@ -137,17 +138,17 @@ class Gemini_Chatbot:
         except sr.UnknownValueError:
             print("Kesalahan Nilai, tidak dapat dipahami")
             logging.warning(msg="Kesalahan Nilai, tidak dapat dipahami")
-            text = "Input tidak dapat diterima, silahkan kembalikan sebuah pesan untuk mengulangi pertanyaan"
+            text = undefinedAnswer
             return text
         except sr.RequestError as e:
             print(f"Error: {e}")
             logging.warning(msg=f"Error: {e}")
-            text = "Input tidak dapat diterima, silahkan kembalikan sebuah pesan untuk mengulangi pertanyaan"
+            text = undefinedAnswer
             return text
         except Exception as e:
             print(e)
             logging.warning(msg=f"Error: {e}")
-            text = "Input tidak dapat diterima, silahkan kembalikan sebuah pesan untuk mengulangi pertanyaan"
+            text = undefinedAnswer
             return text
 
     def speechListen(self):
@@ -163,7 +164,7 @@ class Gemini_Chatbot:
         except Exception as e:
             logging.warning(msg=f'Error: {e}')
             print(e)
-            text = "Input tidak dapat diterima, silahkan kembalikan sebuah pesan untuk mengulangi pertanyaan"
+            text = undefinedAnswer
             return text
 
     def sendMessage(self, text):
@@ -230,7 +231,7 @@ class Gemini_Chatbot:
         while isCommunicating:
             try:
                 text = self.speechListen()
-                if (isAnswering and ("stop" in text.lower)) or not isAnswering:
+                if not text == undefinedAnswer or not text == "":
                     response = self.sendMessage(text=text)
                     print(f"Response: {response}")
                     logging.info(msg=f"Response: {response}")
