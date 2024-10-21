@@ -155,7 +155,7 @@ class Gemini_Chatbot:
         try:
             with self.microphone as source:
                 self.recognizer.adjust_for_ambient_noise(
-                    source=source, duration=1)
+                    source=source, duration=2)
                 logging.info(msg="Listening for input...")
                 print("Listening for input....")
                 audio = self.recognizer.listen(source=source)
