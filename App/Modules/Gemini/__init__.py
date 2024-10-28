@@ -57,7 +57,7 @@ class Gemini_Chatbot:
         logging.basicConfig(
             filename="./App/Logs/app.log",
             encoding="utf-8",
-            filemode="a",
+            filemode="w",
             format="{asctime} - {levelname} - {message}",
             style="{",
             datefmt="%Y-%m-%d %H:%M",
