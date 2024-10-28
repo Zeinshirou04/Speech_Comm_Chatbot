@@ -10,10 +10,7 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold, BlockedP
 import pyttsx3
 from pydub import AudioSegment
 import pygame
-
-isSpeaking = False
-isAnswering = False
-isCommunicating = False
+import multiprocessing
 
 undefinedAnswer = "Input tidak dapat diterima, silahkan kembalikan sebuah pesan untuk mengulangi pertanyaan"
 
@@ -53,6 +50,11 @@ class Gemini_Chatbot:
     model = None
     chat = None
     engine = None
+    
+    
+    isSpeaking = False
+    isAnswering = False
+    isCommunicating = False
 
     history = []
 
@@ -127,6 +129,7 @@ class Gemini_Chatbot:
             text=text, filename="./src/voices/original.wav")
         self.engine.runAndWait()
         self.pitchShift()
+        self.isAnswering = True
         pygame.mixer.music.load("./src/voices/pitched.wav")
         pygame.mixer.music.play()
 
@@ -157,7 +160,7 @@ class Gemini_Chatbot:
         try:
             with self.microphone as source:
                 self.recognizer.adjust_for_ambient_noise(
-                    source=source, duration=2)
+                    source=source, duration=1.5)
                 logging.info(msg="Listening for input...")
                 print("Listening for input....")
                 audio = self.recognizer.listen(source=source)
@@ -188,7 +191,7 @@ class Gemini_Chatbot:
                                    u"\U00002702-\U000027B0"
                                    u"\U000024C2-\U0001F251"
                                    "]+", flags=re.UNICODE)
-        text = emoji_pattern.sub(r'', text)
+        text = emoji_pattern.sub('', text)
         return text
 
     def loadPrompt(self, promptPath="./src/prompt.txt"):
@@ -229,16 +232,23 @@ class Gemini_Chatbot:
         print(f"History: {type(self.history)}")
 
     def run(self):
-        isCommunicating = True
-        while isCommunicating:
+        self.isCommunicating = True
+        while self.isCommunicating:
+            print("Current answering status: ", self.isAnswering)
+            if not pygame.mixer.music.get_busy(): self.isAnswering = False 
             try:
                 text = self.speechListen()
-                logging.warning(msg=f"Current state is: {"rosana" in text.lower()}")
+                state = "rosana" in text.lower()
+                logging.warning(msg=f"Current state is: {state}")
                 if "rosana" in text.lower():
                     response = self.sendMessage(text=text)
                     print(f"Response: {response}")
                     logging.info(msg=f"Response: {response}")
                     self.textToSpeech(text=response)
+                elif not self.isAnswering:
+                    self.textToSpeech(text="Maaf, aku belum bisa memproses pertanyaan mu. Bisakah kamu mengulanginya sekali lagi sembari menyebutkan namaku?")
+                else:
+                    continue
             except KeyboardInterrupt:
                 print("Program Closed")
                 logging.warning(msg=f"Program Closed")
