@@ -238,17 +238,10 @@ class Gemini_Chatbot:
             if not pygame.mixer.music.get_busy(): self.isAnswering = False 
             try:
                 text = self.speechListen()
-                state = "rosana" in text.lower()
-                logging.warning(msg=f"Current state is: {state}")
-                if "rosana" in text.lower():
-                    response = self.sendMessage(text=text)
-                    print(f"Response: {response}")
-                    logging.info(msg=f"Response: {response}")
-                    self.textToSpeech(text=response)
-                elif not self.isAnswering:
-                    self.textToSpeech(text="Maaf, aku belum bisa memproses pertanyaan mu. Bisakah kamu mengulanginya sekali lagi sembari menyebutkan namaku?")
-                else:
-                    continue
+                response = self.sendMessage(text=text)
+                print(f"Response: {response}")
+                logging.info(msg=f"Response: {response}")
+                self.textToSpeech(text=response)
             except KeyboardInterrupt:
                 print("Program Closed")
                 logging.warning(msg=f"Program Closed")
